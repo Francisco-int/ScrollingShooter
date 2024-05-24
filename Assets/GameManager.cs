@@ -4,47 +4,52 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] float time;
-    [SerializeField] float rateRounds;
     [SerializeField] int enemiesAmount;
-    [SerializeField] int enemiesAddAmount;
-    [SerializeField] bool startRound;
-    [SerializeField] float addRateRound;
     [SerializeField] List<GameObject> enemiesObjects;
     [SerializeField] GameObject enemyObject;
-
+    [SerializeField] Transform enemyPosAppear;
+    [SerializeField] float timeToAppearAgain;
+    public int enemynum;
     // Start is called before the first frame update
     void Start()
     {
-        time = Time.time;
+        for (int i = 0; i < enemiesAmount; i++)
+        {
+            GameObject enemy = Instantiate(enemyObject, Vector3.zero, Quaternion.identity);         
+            enemy.SetActive(false);
+            enemiesObjects.Add(enemy);
+            enemynum++;
+        }
+        Invoke("EnemiesAppear", 1f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (time == rateRounds)
+
+
+    }
+     void EnemiesAppear()
+    {
+        for (int i = 0; i < enemiesObjects.Count; i++)
         {
-            time = 0;
-            rateRounds = addRateRound;
-            RoundEnemies();
-            
+            enemyPosAppear.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
+            enemiesObjects[i].transform.position = enemyPosAppear.position;
+            enemiesObjects[i].SetActive(true);
+           
         }
     }
 
-    void RoundEnemies()
+    public void SetAbleEnemy(int enemyToActivate)
     {
-        for (int i = 0; i < enemiesAmount; i++)
-        {
-            enemiesObjects.Add(enemyObject);
-        }
-        for (int i = 0; i < enemiesObjects.Count; i++)
-        {
-            enemiesObjects[i].gameObject.SetActive(true);
-        }
-        for (int i = 0; i < enemiesAddAmount; i++)
-        {
-            enemiesObjects.Add(enemyObject);
-        }
+        StartCoroutine(AppearAgain(enemyToActivate));
+    }
 
+    IEnumerator AppearAgain(int enemyToActivate)
+    {
+        yield return new WaitForSeconds(Random.Range(0, timeToAppearAgain));
+        enemyPosAppear.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
+        enemiesObjects[enemyToActivate].transform.position = enemyPosAppear.position;
+        enemiesObjects[enemyToActivate].SetActive(true);
     }
 }

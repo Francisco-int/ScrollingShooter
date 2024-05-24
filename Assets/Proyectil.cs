@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Proyectil : MonoBehaviour
@@ -21,7 +22,13 @@ public class Proyectil : MonoBehaviour
             StartCoroutine(SetDisable());
         }
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other != null)
+        {
+            this.gameObject.SetActive(false);
+        }
+    }
     IEnumerator SetDisable()
     {
         yield return new WaitForSeconds(timerSetDisable);
