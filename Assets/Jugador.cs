@@ -1,27 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Jugador : MonoBehaviour
 {
     [SerializeField]float velocidadJugador;
-    [SerializeField] float tiempoEnfriamiento;
+    [SerializeField] float intervaloEntreDisparos;
     [SerializeField] float fuerzaDisparo;
     [SerializeField] List<GameObject> proyectilInstances;
     [SerializeField] GameObject proyectilPrefab;
-    int proyectilADiparar;
-    bool ableDisparador;
-    Transform cañon;
+    [SerializeField] int proyectilADiparar;
+    [SerializeField] bool ableDisparador;
+    [SerializeField] Transform cañon;
+    [SerializeField] Slider calentamientoSlider;
     [SerializeField] int cantidadProyectiles;
+    [SerializeField] float medidorDeTemperatura;
+    [SerializeField] float calentamientoPorDisparo;
+    [SerializeField] bool ableEnfriamiento;
+    [SerializeField] float cantEnfriamiento;
+    [SerializeField] float sobreCalentamiento;
+    [SerializeField] float timerEnfriamiento;
     float horizontal;
     float vertical;
 
     // Start is called before the first frame update
     void Start()
     {
+        calentamientoSlider.maxValue = sobreCalentamiento;
+        ableDisparador = true;
         for (int i = 0; i < cantidadProyectiles; i++)
         {
             GameObject proyectilInstance = Instantiate(proyectilPrefab, Vector3.zero, Quaternion.identity);
+            proyectilInstance.SetActive(false);
             proyectilInstances.Add(proyectilInstance);
         }
     }
@@ -30,7 +41,7 @@ public class Jugador : MonoBehaviour
     void Update()
     {
         MovimientoJugador();
-
+        Ataque();
     }
 
     void MovimientoJugador()
@@ -40,43 +51,55 @@ public class Jugador : MonoBehaviour
 
        Vector3 direccion = new Vector3 (horizontal, 0, vertical);  
 
-        transform.Translate(direccion * Time.deltaTime * velocidadJugador);
+        transform.Translate(direccion * Time.deltaTime * -velocidadJugador);
 
     }
     void Ataque()
     {
-        /*       
-        if(Input.GetKey(KeyCode.Space) && ableDisparador)
+
+        if (Input.GetKey(KeyCode.Space) && ableDisparador && medidorDeTemperatura < sobreCalentamiento)
         {
-            proyectilPrefab[proyectilADiparar].transform.position = cañon.position;
-            proyectilPrefab[proyectilADiparar].SetActive(true);
-            Rigidbody rb = proyectilPrefab[proyectilADiparar].GetComponent<Rigidbody>();
-            rb.AddForce(rb.transform.forward * fuerzaDisparo, ForceMode.Impulse);
+            ableDisparador = false;
+            ableEnfriamiento = false;
+            proyectilInstances[proyectilADiparar].transform.position = cañon.position;
+            proyectilInstances[proyectilADiparar].SetActive(true);
+            Rigidbody rb = proyectilInstances[proyectilADiparar].GetComponent<Rigidbody>();
+            rb.AddForce(cañon.transform.forward * fuerzaDisparo, ForceMode.Impulse);
             proyectilADiparar++;
 
-            
-            
-
-            if(proyectilADiparar == proyectilPrefab.Length)
+            if (proyectilADiparar == proyectilInstances.Count)
             {
-               ableDisparador = false;
-               StartCoroutine(Enfriamiento());
+                proyectilADiparar = 0;
 
             }
+            medidorDeTemperatura += calentamientoPorDisparo;
+            calentamientoSlider.value = medidorDeTemperatura;
+            StartCoroutine(Enfriamiento());
+            StartCoroutine(IntervaloDisparos());
+         
         }
-        */
+        if (ableEnfriamiento)
+        {
+            medidorDeTemperatura -= cantEnfriamiento;
+            calentamientoSlider.value = medidorDeTemperatura;
+            if (medidorDeTemperatura <= 0)
+            {
+                ableEnfriamiento = false;
+                medidorDeTemperatura = 0;
+            }
+        }
     }
 
+    IEnumerator IntervaloDisparos()
+    {
+        
+        yield return new WaitForSeconds(intervaloEntreDisparos);
+        ableDisparador = true; 
+
+    }
     IEnumerator Enfriamiento()
     {
-        //proyectilADiparar = 0;
-        //for (int i = 0; i < proyectilPrefab.Length; i++)
-        //{
-        //    proyectilPrefab[i].SetActive(false);
-        //}
-        //yield return new WaitForSeconds(tiempoEnfriamiento);
-        //ableDisparador = true; 
-        return null;
-
+        yield return new WaitForSeconds(timerEnfriamiento);
+        ableEnfriamiento = true;
     }
 }
