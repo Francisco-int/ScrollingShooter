@@ -6,44 +6,30 @@ public class Jugador : MonoBehaviour
 {
     [SerializeField]float velocidadJugador;
     [SerializeField] float tiempoEnfriamiento;
-   [SerializeField] float fuerzaDisparo;
-   [SerializeField] GameObject[] proyectilPrefab;
+    [SerializeField] float fuerzaDisparo;
+    [SerializeField] List<GameObject> proyectilInstances;
+    [SerializeField] GameObject proyectilPrefab;
     int proyectilADiparar;
     bool ableDisparador;
     Transform cañon;
-
+    [SerializeField] int cantidadProyectiles;
     float horizontal;
-float vertical;
+    float vertical;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        for (int i = 0; i < cantidadProyectiles; i++)
+        {
+            GameObject proyectilInstance = Instantiate(proyectilPrefab, Vector3.zero, Quaternion.identity);
+            proyectilInstances.Add(proyectilInstance);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         MovimientoJugador();
-
-        if(Input.GetKeyDown(KeyCode.F)) 
-        {
-            if (proyectilPrefab[proyectilPrefab.GetLength(proyectilPrefab.Length)].activeInHierarchy)
-            {
-                for (int i = 0; i < proyectilPrefab.Length; i++)
-                {
-                    proyectilPrefab[i].SetActive(false);
-                }
-            }
-            else
-            {
-                Debug.Log("no estan todos activados");
-            }
-        }
-
-        
-
-
 
     }
 
@@ -59,7 +45,7 @@ float vertical;
     }
     void Ataque()
     {
-
+        /*       
         if(Input.GetKey(KeyCode.Space) && ableDisparador)
         {
             proyectilPrefab[proyectilADiparar].transform.position = cañon.position;
@@ -78,17 +64,19 @@ float vertical;
 
             }
         }
+        */
     }
 
     IEnumerator Enfriamiento()
     {
-        proyectilADiparar = 0;
-        for (int i = 0; i < proyectilPrefab.Length; i++)
-        {
-            proyectilPrefab[i].SetActive(false);
-        }
-        yield return new WaitForSeconds(tiempoEnfriamiento);
-        ableDisparador = true;
+        //proyectilADiparar = 0;
+        //for (int i = 0; i < proyectilPrefab.Length; i++)
+        //{
+        //    proyectilPrefab[i].SetActive(false);
+        //}
+        //yield return new WaitForSeconds(tiempoEnfriamiento);
+        //ableDisparador = true; 
+        return null;
 
     }
 }
