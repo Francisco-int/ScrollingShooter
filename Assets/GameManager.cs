@@ -12,15 +12,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] int limitEnemiesDead;
     [SerializeField] int addLimitenemiesDead;
     [SerializeField] int enemiesKilled;
+    [SerializeField] int killBoss;
     public int enemynum;
     float rot;
-
+    bool ableSpawnEnemies;
+    [SerializeField] GameObject boss;
     // Start is called before the first frame update
     void Start()
     {
+
+        ableSpawnEnemies = true;
         for (int i = 0; i < enemiesAmount; i++)
         {
-            GameObject enemy = Instantiate(enemyObject, Vector3.zero, Quaternion.identity);         
+            GameObject enemy = Instantiate(enemyObject, Vector3.zero, Quaternion.identity);
             enemy.SetActive(false);
             enemiesObjects.Add(enemy);
             enemynum++;
@@ -36,6 +40,11 @@ public class GameManager : MonoBehaviour
             ChangeRotGame();
 
         }
+        if(enemiesKilled > killBoss)
+        {
+            ableSpawnEnemies = false;
+            boss.SetActive(true);
+        }
     }
 
     void ChangeRotGame()
@@ -49,12 +58,19 @@ public class GameManager : MonoBehaviour
 
     void EnemiesAppear()
     {
-        for (int i = 0; i < enemiesObjects.Count; i++)
+        if(ableSpawnEnemies)
         {
-            enemyPosAppear.transform.position = new Vector3(Random.Range(8,-8), 0, -9.19f);
-            enemiesObjects[i].transform.position = enemyPosAppear.position;
-            enemiesObjects[i].SetActive(true);           
+         
+            for (int i = 0; i < enemiesObjects.Count; i++)
+        {
+                enemyPosAppear.transform.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
+                enemiesObjects[i].transform.position = enemyPosAppear.position;
+                enemiesObjects[i].SetActive(true);
+                StartCoroutine(randomTimeSpawn());
+                
         }
+        }
+        
     }
 
     public void SetAbleEnemy(int enemyToActivate)
@@ -64,10 +80,20 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AppearAgain(int enemyToActivate)
     {
-        enemiesKilled++;
+        if (ableSpawnEnemies)
+        {
+            enemiesKilled++;
+            enemyToActivate--;
+            yield return new WaitForSeconds(Random.Range(0, timeToAppearAgain));
+            enemyPosAppear.transform.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
+            enemiesObjects[enemyToActivate].transform.position = enemyPosAppear.position;
+            enemiesObjects[enemyToActivate].SetActive(true);
+        }
+           
+    }
+    IEnumerator randomTimeSpawn()
+    {
         yield return new WaitForSeconds(Random.Range(0, timeToAppearAgain));
-        enemyPosAppear.transform.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
-        enemiesObjects[enemyToActivate].transform.position = enemyPosAppear.position;
-        enemiesObjects[enemyToActivate].SetActive(true);
+        
     }
 }
