@@ -9,7 +9,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject enemyObject;
     [SerializeField] Transform enemyPosAppear;
     [SerializeField] float timeToAppearAgain;
+    [SerializeField] int limitEnemiesDead;
+    [SerializeField] int addLimitenemiesDead;
+    [SerializeField] int enemiesKilled;
     public int enemynum;
+    float rot;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,17 +31,29 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (enemiesKilled > limitEnemiesDead)
+        {
+            ChangeRotGame();
 
-
+        }
     }
-     void EnemiesAppear()
+
+    void ChangeRotGame()
+    {
+        rot += 90;
+        limitEnemiesDead += addLimitenemiesDead;
+
+        //MovimientoCamara movimientoCamara = GameObject.Find("Camera").GetComponent<MovimientoCamara>();
+        //movimientoCamara.ChangeRot(rot);
+    }
+
+    void EnemiesAppear()
     {
         for (int i = 0; i < enemiesObjects.Count; i++)
         {
-            enemyPosAppear.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
+            enemyPosAppear.transform.position = new Vector3(Random.Range(8,-8), 0, -9.19f);
             enemiesObjects[i].transform.position = enemyPosAppear.position;
-            enemiesObjects[i].SetActive(true);
-           
+            enemiesObjects[i].SetActive(true);           
         }
     }
 
@@ -47,8 +64,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AppearAgain(int enemyToActivate)
     {
+        enemiesKilled++;
         yield return new WaitForSeconds(Random.Range(0, timeToAppearAgain));
-        enemyPosAppear.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
+        enemyPosAppear.transform.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
         enemiesObjects[enemyToActivate].transform.position = enemyPosAppear.position;
         enemiesObjects[enemyToActivate].SetActive(true);
     }

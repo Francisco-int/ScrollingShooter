@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Jugador : MonoBehaviour
 {
-    [SerializeField]float velocidadJugador;
+    [SerializeField] float velocidadJugador;
     [SerializeField] float intervaloEntreDisparos;
     [SerializeField] float fuerzaDisparo;
     [SerializeField] List<GameObject> proyectilInstances;
