@@ -22,13 +22,7 @@ public class Proyectil : MonoBehaviour
             StartCoroutine(SetDisable());
         }
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other != null)
-        {
-            this.gameObject.SetActive(false);
-        }
-    }
+
     IEnumerator SetDisable()
     {
         yield return new WaitForSeconds(timerSetDisable);

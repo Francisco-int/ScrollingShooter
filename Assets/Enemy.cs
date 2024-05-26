@@ -6,31 +6,34 @@ public class Enemy : MonoBehaviour
 {
 
     [SerializeField] float velocidad;
-    [SerializeField] int numEnemy;
+    [SerializeField] public int numEnemy;
     [SerializeField] GameManager gameManager;
     [SerializeField] Transform player;
     [SerializeField] GameObject proyectil;
     [SerializeField] float forceShot;
-
+    [SerializeField] bool ableDisparar;
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("ff1");
-
-    }
-    private void Awake()
-    {
         player = GameObject.Find("Player").GetComponent<Transform>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        numEnemy += gameManager.enemynum;
-        Shot();
-        Debug.Log("ff");
+    }
+   
+    private void Awake()
+    {
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (ableDisparar)
+        {
+            ableDisparar = false;
+            StartCoroutine(Disparar());
+        }
+
         transform.position = transform.position + new Vector3(0, 0, velocidad * Time.deltaTime);
         if (transform.position.z > 15 || transform.position.z > 7)
         {
@@ -43,19 +46,14 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Proyectil"))
         {
+            ableDisparar = true;
+            other.gameObject.SetActive(false);
+            gameManager.enemiesKilled++;
             Dead();
         }
     }
 
-    void Shot()
-    {
-        GameObject newProyectil = Instantiate(proyectil, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
-        Rigidbody rb = newProyectil.GetComponent<Rigidbody>();
-        rb.AddForce(transform.forward * forceShot, ForceMode.Impulse);
-        StartCoroutine(Disparar());
-        Debug.Log("Disparo");
 
-    }
     void Dead()
     {
         gameManager.SetAbleEnemy(numEnemy);
@@ -63,7 +61,11 @@ public class Enemy : MonoBehaviour
     }
     IEnumerator Disparar()
     {
+        GameObject newProyectil = Instantiate(proyectil, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
+        Rigidbody rb = newProyectil.GetComponent<Rigidbody>();
+        rb.AddForce(transform.forward * forceShot, ForceMode.Impulse);
         yield return new WaitForSeconds(Random.Range(0.5f, 2));
-        Shot();
+        Debug.Log("dd");
+        ableDisparar = true;
     }
 }

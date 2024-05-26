@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class MovimientoCamara : MonoBehaviour
 {
+    public float rotationAngle = 0.0f;
+    public float rotationSpeed = 5.0f;
+
     // Start is called before the first frame update
     void Start()
     {
-        transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, 9, 0);
+        rotationAngle += rotationSpeed * Time.deltaTime;
+
+
+        rotationAngle = Mathf.Clamp(rotationAngle, 90, 0);
+
+        transform.Rotate(Vector3.up, rotationAngle * Time.deltaTime);
     }
 
     // Update is called once per frame
@@ -17,6 +25,6 @@ public class MovimientoCamara : MonoBehaviour
     }
     public void ChangeRot(float rot)
     {
- 
+        //transform.rotation = new Quaternion(transform.rotation.x, rot, transform.rotation.z, 0);
     }
 }

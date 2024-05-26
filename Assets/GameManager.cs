@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,12 +12,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] float timeToAppearAgain;
     [SerializeField] int limitEnemiesDead;
     [SerializeField] int addLimitenemiesDead;
-    [SerializeField] int enemiesKilled;
+    [SerializeField] public int enemiesKilled;
     [SerializeField] int killBoss;
     public int enemynum;
     float rot;
     bool ableSpawnEnemies;
     [SerializeField] GameObject boss;
+    [SerializeField] Text textEnemiesKilled;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +29,8 @@ public class GameManager : MonoBehaviour
             GameObject enemy = Instantiate(enemyObject, Vector3.zero, Quaternion.identity);
             enemy.SetActive(false);
             enemiesObjects.Add(enemy);
-            enemynum++;
+            Enemy enemyS = enemy.GetComponent<Enemy>();
+            enemyS.numEnemy = i;
         }
         Invoke("EnemiesAppear", 1f);
     }
@@ -35,26 +38,31 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemiesKilled > limitEnemiesDead)
-        {
-            ChangeRotGame();
+        textEnemiesKilled.text = "Enemies killed: " + enemiesKilled;
+        //if (enemiesKilled > limitEnemiesDead)
+        //{
+        //    ChangeRotGame();
 
-        }
-        if(enemiesKilled > killBoss)
+        //}
+        if (enemiesKilled > killBoss)
         {
             ableSpawnEnemies = false;
-            boss.SetActive(true);
+            for (int i = 0; i < enemiesAmount; i++)
+            {
+                enemiesObjects[i].SetActive(false);
+            }
+                boss.SetActive(true);
         }
     }
 
-    void ChangeRotGame()
-    {
-        rot += 90;
-        limitEnemiesDead += addLimitenemiesDead;
+    //void ChangeRotGame()
+    //{
+    //    rot += 90;
+    //    limitEnemiesDead += addLimitenemiesDead;
 
-        //MovimientoCamara movimientoCamara = GameObject.Find("Camera").GetComponent<MovimientoCamara>();
-        //movimientoCamara.ChangeRot(rot);
-    }
+    //    MovimientoCamara movimientoCamara = GameObject.Find("Camera").GetComponent<MovimientoCamara>();
+    //    movimientoCamara.ChangeRot(rot);
+    //}
 
     void EnemiesAppear()
     {
@@ -82,8 +90,6 @@ public class GameManager : MonoBehaviour
     {
         if (ableSpawnEnemies)
         {
-            enemiesKilled++;
-            enemyToActivate--;
             yield return new WaitForSeconds(Random.Range(0, timeToAppearAgain));
             enemyPosAppear.transform.position = new Vector3(Random.Range(8, -8), 0, -9.19f);
             enemiesObjects[enemyToActivate].transform.position = enemyPosAppear.position;

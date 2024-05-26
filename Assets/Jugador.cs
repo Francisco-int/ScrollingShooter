@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Jugador : MonoBehaviour
@@ -27,6 +28,7 @@ public class Jugador : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1f;
         calentamientoSlider.maxValue = sobreCalentamiento;
         ableDisparador = true;
         for (int i = 0; i < cantidadProyectiles; i++)
@@ -42,8 +44,15 @@ public class Jugador : MonoBehaviour
     {
         MovimientoJugador();
         Ataque();
+        Limits();
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other != null)
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
     void MovimientoJugador()
     {
        horizontal  = Input.GetAxis("Horizontal");
@@ -101,5 +110,24 @@ public class Jugador : MonoBehaviour
     {
         yield return new WaitForSeconds(timerEnfriamiento);
         ableEnfriamiento = true;
+    }
+    void Limits()
+    {
+        if (transform.position.x > 10)
+        {
+            transform.position = new Vector3(10, transform.position.y, transform.position.z);
+        }
+        if (transform.position.x < -10)
+        {
+            transform.position = new Vector3(-10, transform.position.y, transform.position.z);
+        }
+        if (transform.position.z < -3.46)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, -3.46f);
+        }
+        if (transform.position.z > 3.46)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, 3.46f);
+        }
     }
 }
