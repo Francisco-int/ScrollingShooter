@@ -46,7 +46,6 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Proyectil"))
         {
-            ableDisparar = true;
             other.gameObject.SetActive(false);
             gameManager.enemiesKilled++;
             Dead();
@@ -56,6 +55,7 @@ public class Enemy : MonoBehaviour
 
     void Dead()
     {
+        ableDisparar = true;
         gameManager.SetAbleEnemy(numEnemy);
         gameObject.SetActive(false);
     }
@@ -65,7 +65,6 @@ public class Enemy : MonoBehaviour
         Rigidbody rb = newProyectil.GetComponent<Rigidbody>();
         rb.AddForce(transform.forward * forceShot, ForceMode.Impulse);
         yield return new WaitForSeconds(Random.Range(0.5f, 2));
-        Debug.Log("dd");
         ableDisparar = true;
     }
 }
